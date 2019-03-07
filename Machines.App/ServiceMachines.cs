@@ -18,13 +18,16 @@ namespace Machines.App
 
         public static LiteDbEntity<T> LiteDb<T>()
         {
-            LiteDbEntity<T> db = new LiteDbEntity<T>(@"D:\New T\mydb");
+            LiteDbEntity<T> db = new LiteDbEntity<T>(@"C:\Users\АбироваА\Desktop\mydb");
 
             return db;
         }
 
 
-        private Worker worker= null;
+        //private Worker worker= null;
+        public Car car = new Car();
+        public Worker worker = new Worker();
+        public Project project = new Project();
 
         public void MainMenu()
         {
@@ -59,11 +62,11 @@ namespace Machines.App
 
         private void RegistrationMenu()
         {
-            Worker worker1 = new Worker();
+            //Worker worker1 = new Worker();
             Console.WriteLine("Введите логин: ");
-            worker1.login = Console.ReadLine();
+            worker.login = Console.ReadLine();
             Console.WriteLine("Введите пароль: ");
-            worker1.password = Console.ReadLine();
+            worker.password = Console.ReadLine();
             Console.WriteLine("Укажите позицию: 1- менеджер, 2- работник");
 
             int choice = 0;
@@ -77,16 +80,15 @@ namespace Machines.App
                 }
             }
             if (choice == 1)
-                worker1.access = access.менеджер;
+                worker.access = access.менеджер;
             if (choice == 2)
-                worker1.access = access.работник;
-            else
-                worker1.access = access.работник; //default
-            worker1.project = null;
-                                            
+                worker.access = access.работник;
+            //else
+            //    worker.access = access.работник; //default
+               
             string message = "";
            
-            if (Registration(worker1, out message))
+            if (Registration(worker, out message))
             {
                 Console.ForegroundColor = ConsoleColor.Green;
                 Console.WriteLine(message);
@@ -103,7 +105,10 @@ namespace Machines.App
                 MainMenu();
             }
 
+            worker = null;
+
         }
+
 
         public bool Registration(Worker worker, out string message)
         {
@@ -111,6 +116,7 @@ namespace Machines.App
             {
                 LiteDb<Worker>().Add(worker);
                 message = "Регистрация прошла успешно";
+               
                 return true;
             }
             catch (Exception ex)
@@ -147,7 +153,7 @@ namespace Machines.App
             login = Console.ReadLine();
             Console.Write("Введите пароль: ");
             password = Console.ReadLine();
-            Worker worker = LogOn(login, password, out message);
+            worker = LogOn(login, password, out message);
             if (worker != null)
             {
                 AuthoriseMenu();
@@ -163,8 +169,7 @@ namespace Machines.App
 
         public void AuthoriseMenu() //this on is full, restricted is to be done
         {
-            Console.Clear();
-            Console.WriteLine("Здравствуйте!");
+            Console.Clear();  
 
             Console.WriteLine("1. Создать проект");
             Console.WriteLine("2. Обслужить машину");
@@ -222,7 +227,7 @@ namespace Machines.App
 
             Console.WriteLine("Введите марку:");
             string brand = Console.ReadLine();
-
+            
             Console.WriteLine("Введите модель:");
             string model = Console.ReadLine();
             Console.WriteLine("Введите гаражный номер:");
@@ -254,8 +259,8 @@ namespace Machines.App
                 Console.WriteLine("Неправильный ввод данных");
                 //CreateProjectMenu();
             }
-            Car car = new Car(brand, model, garageNumber, type);
-            return car;
+            Car cr = new Car(brand, model, garageNumber, type);
+            return cr;
         }
 
         public void CreateProjectMenu()
@@ -276,9 +281,9 @@ namespace Machines.App
                 {
                     Console.Clear();
                     Console.WriteLine("Введите название проекта:");
-                    string name = Console.ReadLine();
+                    project.name = Console.ReadLine();
                    
-                    Project project = new Project(name);                    
+                    //Project project = new Project(name);                    
                     Console.Clear();
                     Console.WriteLine("1. Добавить машину");
                     Console.WriteLine("2. Назад");
@@ -296,29 +301,29 @@ namespace Machines.App
                             Console.Clear();
 
                             Console.WriteLine("Введите марку:");
-                            string brand = Console.ReadLine();
+                            car.brand = Console.ReadLine();
 
                             Console.WriteLine("Введите модель:");
-                            string model = Console.ReadLine();
+                            car.model = Console.ReadLine();
                             Console.WriteLine("Введите гаражный номер:");
-                            string garageNumber = Console.ReadLine();
+                            car.garageNumber = Console.ReadLine();
 
                             Console.WriteLine("Укажите тип: 1 - дробилка, 2 - погрузчик, 3 - самосвал");
                             int choice2 = 0;
-                            type type = type.дробилка;
+                            //type type = type.дробилка;
                             bool ischoice2 = Int32.TryParse(Console.ReadLine(), out choice2);
                             if (ischoice2)
                             {
                                 switch (choice2)
                                 {
                                     case 1:
-                                        type = type.дробилка;
+                                        car.type = type.дробилка;
                                         break;
                                     case 2:
-                                        type = type.погрузчик;
+                                        car.type = type.погрузчик;
                                         break;
                                     case 3:
-                                        type = type.самосвал;
+                                        car.type = type.самосвал;
                                         break;
                                     default:
                                         break;
@@ -329,9 +334,11 @@ namespace Machines.App
                                 Console.WriteLine("Неправильный ввод данных");
                                 CreateProjectMenu();
                             }
-                            Car c = new Car(brand, model, garageNumber, type);                            
-                            project.addCar(c);
-                            LiteDb<Car>().Add(c);
+                            //Car c = new Car(brand, model, garageNumber, type);                            
+                            //project.addCar(car);
+                            //project.cars.Add(car);
+                            //LiteDb<Car>().Add(car);
+                            //LiteDb<Project>().Add(project);
                         }                      
                     }
                     else
@@ -339,7 +346,11 @@ namespace Machines.App
                         Console.Clear();
                         CreateProjectMenu();
                     }
+                    project.cars.Add(car);
+                    LiteDb<Car>().Add(car);
                     LiteDb<Project>().Add(project);
+                    Console.Clear();
+                    AuthoriseMenu();
                 }               
             }
             else
@@ -375,8 +386,7 @@ namespace Machines.App
 
         public void ServiceCarMenu()
         {
-            Console.Clear();
-            
+            Console.Clear();           
 
             List<Project> projects = LiteDb<Project>().GetCollection();
 
@@ -391,8 +401,11 @@ namespace Machines.App
             {
                 foreach (Project item in projects)
                 {
+                    Console.WriteLine(item.name);
                     item.printAll();
                 }
+               
+                
                 Console.WriteLine("Укажите проект:");
                 string name = Console.ReadLine();
                 Project p = projects.FirstOrDefault(n => n.name == name);
@@ -401,6 +414,14 @@ namespace Machines.App
                     Console.WriteLine("Нет  проекта с таким названием");
                     Thread.Sleep(500);
                     AuthoriseMenu();
+                }
+                if(p!=null)
+                {
+                    p.printAll();
+                    foreach (Car item in p.cars)
+                    {
+                        item.printInfo();
+                    }
                 }
 
                 Console.WriteLine("Введите номер машины");
@@ -413,37 +434,39 @@ namespace Machines.App
                     Thread.Sleep(200);
                     AuthoriseMenu();
                 }
-
-                Console.WriteLine("1. Создать остановку");
-                Console.WriteLine("2. Добавить компонент");
-                Console.WriteLine("3. Назад");
-                string message = "";
-                int choice3 = 0;
-                bool tryChoice3 = Int32.TryParse(Console.ReadLine(), out choice3);
-                if (tryChoice3)
+                else
                 {
-                    switch (choice3)
+                    Console.WriteLine("1. Создать остановку");
+                    Console.WriteLine("2. Добавить компонент");
+                    Console.WriteLine("3. Назад");
+                    string message = "";
+                    int choice3 = 0;
+                    bool tryChoice3 = Int32.TryParse(Console.ReadLine(), out choice3);
+                    if (tryChoice3)
                     {
-                        case 1:
-                            Console.Clear();
-                            Stop s = createStop(c, worker);
-                            p.createStop(c, s, out message);
-                            LiteDb<Stop>().Add(s);
-                            LiteDb<Car>().Edit(c);
-                            break;
-                        case 2:
-                            Console.Clear();
-                            Component comp = createComponent();
-                            p.addNewComponent(c, out message);
-                            LiteDb<Component>().Add(comp);
-                            LiteDb<Car>().Edit(c);
-                            break;
-                        case 3:
-                            Console.Clear();
-                            ServiceCarMenu();
-                            break;
-                        default:
-                            break;
+                        switch (choice3)
+                        {
+                            case 1:
+                                Console.Clear();
+                                Stop s = createStop(c, worker);
+                                p.createStop(c, s, out message);
+                                LiteDb<Stop>().Add(s);
+                                LiteDb<Car>().Edit(c);
+                                break;
+                            case 2:
+                                Console.Clear();
+                                //Component comp = createComponent();
+                                p.addNewComponent(c, out message);
+
+                                LiteDb<Car>().Edit(c);
+                                break;
+                            case 3:
+                                Console.Clear();
+                                AuthoriseMenu();
+                                break;
+                            default:
+                                break;
+                        }
                     }
                 }
             }
@@ -454,15 +477,16 @@ namespace Machines.App
         {
             List<Project> projects = LiteDb<Project>().GetCollection();
             if (projects==null)
+            {
                 Console.WriteLine("На данный момент ни одного проекта не создано");
-           
-               
+            }
+
             else
             {
                 foreach (Project item in projects)
-                {
+                {                   
                     if (item.cars != null)
-                    item.printInfo();
+                        item.printInfo();
                     else
                         Console.WriteLine("Нет машин на проекте");
 

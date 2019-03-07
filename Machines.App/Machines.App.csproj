@@ -34,7 +34,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Machines">
-      <HintPath>..\..\Machines\Machines\bin\Debug\Machines.dll</HintPath>
+      <HintPath>..\..\MachinesDll\Machines\bin\Debug\Machines.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
